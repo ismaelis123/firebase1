@@ -1,52 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { db } from "./src/database/firebaseconfig";
-import { collection, onSnapshot, doc, deleteDoc } from "firebase/firestore";
-
-import FormularioProductos from "./src/componentes/FormularioProducto";
-import TablaProductos from "./src/componentes/TablaProductos";
-import FormularioClientes from "./src/componentes/FormularioClientes";
-import TablaClientes from "./src/componentes/TablaClientes";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { View } from "react-native";
+import { auth } from "./src/database/firebaseconfig";
+import Login from "./src/views/Login";
+import Productos from "./src/views/Productos";
 
 export default function App() {
-  const [productos, setProductos] = useState([]);
-  const [clientes, setClientes] = useState([]);
+  const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    const unsubscribeProductos = onSnapshot(collection(db, "productos"), (snapshot) => {
-      setProductos(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    // Escucha los cambios en la autenticación (login/logout)
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUsuario(user);
     });
-    return () => unsubscribeProductos();
+    return unsubscribe;
   }, []);
 
-  useEffect(() => {
-    const unsubscribeClientes = onSnapshot(collection(db, "clientes"), (snapshot) => {
-      setClientes(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-    return () => unsubscribeClientes();
-  }, []);
-
-  const eliminarProducto = async (id) => {
-    await deleteDoc(doc(db, "productos", id));
+  const cerrarSesion = async () => {
+    await signOut(auth);
   };
 
-  const eliminarCliente = async (id) => {
-    await deleteDoc(doc(db, "clientes", id));
-  };
+  if (!usuario) {
+    // Si no hay usuario autenticado, mostrar login
+    return <Login onLoginSuccess={() => setUsuario(auth.currentUser)} />;
+  }
 
+  // Si hay usuario autenticado, mostrar productos
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Productos */}
-      <FormularioProductos />
-      <TablaProductos productos={productos} eliminarProducto={eliminarProducto} />
-
-      {/* Clientes */}
-      <FormularioClientes />
-      <TablaClientes clientes={clientes} eliminarCliente={eliminarCliente} />
-    </ScrollView>
+    <View style={{ flex: 1 }}>
+      <Productos cerrarSesion={cerrarSesion}/>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 20, flexGrow: 1 },
-});

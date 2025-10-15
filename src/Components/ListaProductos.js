@@ -23,5 +23,6 @@ const styles = StyleSheet.create({
   titulo: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
   item: { fontSize: 18, marginBottom: 5 },
 });
- 
+
 export default ListaProductos;
+

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 
-const BotonEliminarProducto = ({ id, eliminarProducto }) => {
+const BotonEliminarEdad = ({ id, eliminarEdad }) => {
   const [visible, setVisible] = useState(false);
 
   const confirmarEliminar = () => {
     setVisible(false);
-    eliminarProducto(id);
+    eliminarEdad(id);
   };
 
   return (
@@ -16,7 +16,7 @@ const BotonEliminarProducto = ({ id, eliminarProducto }) => {
         style={styles.boton}
         onPress={() => setVisible(true)}
       >
-        <Text style={styles.textoBoton}>🗑</Text>
+        <Text style={styles.textoBoton}>🗑️</Text>
       </TouchableOpacity>
 
       {/* Modal de confirmación */}
@@ -28,7 +28,7 @@ const BotonEliminarProducto = ({ id, eliminarProducto }) => {
       >
         <View style={styles.overlay}>
           <View style={styles.modal}>
-            <Text style={styles.texto}>¿Desea eliminar este producto?</Text>
+            <Text style={styles.texto}>¿Desea eliminar este registro de edad?</Text>
 
             <View style={styles.fila}>
               <TouchableOpacity
@@ -51,7 +51,6 @@ const BotonEliminarProducto = ({ id, eliminarProducto }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   boton: {
@@ -90,4 +89,4 @@ const styles = StyleSheet.create({
   textoAccion: { color: "white", fontWeight: "bold" },
 });
 
-export default BotonEliminarProducto;
+export default BotonEliminarEdad;
